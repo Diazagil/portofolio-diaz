@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diaz — Backend Web Developer</title>
+<meta name="description" content="Diaz, backend web developer yang berfokus pada Spring Boot, Laravel, dan arsitektur API yang rapi.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0c0e12;
+    --bg-panel: #14171d;
+    --bg-panel-2: #191d24;
+    --border: #262b34;
+    --border-soft: #1d222a;
+    --text: #eae8e2;
+    --text-muted: #8d93a0;
+    --text-dim: #5a5f6b;
+    --accent: #e2a13d;
+    --accent-dim: #7a5c2c;
+    --accent-soft: rgba(226, 161, 61, 0.1);
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --max-w: 1040px;
+    --radius: 3px;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin: 0;
+    background: var(--bg);
+    background-image:
+      linear-gradient(var(--border-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border-soft) 1px, transparent 1px);
+    background-size: 64px 64px;
+    background-position: -1px -1px;
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+  }
+
+  a{ color: inherit; text-decoration: none; }
+  ::selection{ background: var(--accent); color: #14100a; }
+
+  a:focus-visible,
+  button:focus-visible{
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .wrap{
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(12, 14, 18, 0.86);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .nav{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 0;
+  }
+  .logo{
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 0.02em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .logo .dot{
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+  }
+  .nav-links{
+    display: flex;
+    gap: 32px;
+    font-size: 14.5px;
+    color: var(--text-muted);
+  }
+  .nav-links a{
+    transition: color .15s ease;
+    padding: 4px 0;
+    border-bottom: 1px solid transparent;
+  }
+  .nav-links a:hover{ color: var(--text); border-color: var(--border); }
+
+  .nav-toggle{
+    display: none;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    width: 38px;
+    height: 34px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 15px;
+    cursor: pointer;
+  }
+
+  @media (max-width: 720px){
+    .nav-links{
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--bg-panel);
+      border-bottom: 1px solid var(--border);
+      flex-direction: column;
+      gap: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .25s ease;
+    }
+    .nav-links.open{ max-height: 320px; }
+    .nav-links a{
+      padding: 14px 24px;
+      width: 100%;
+      border-bottom: 1px solid var(--border-soft);
+      border-radius: 0;
+    }
+    .nav-toggle{ display: block; }
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    padding: 88px 0 72px;
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 56px;
+    align-items: center;
+  }
+  .hero-kicker{
+    font-family: var(--mono);
+    font-size: 13.5px;
+    color: var(--accent);
+    margin: 0 0 18px;
+  }
+  .hero h1{
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: clamp(34px, 5.4vw, 56px);
+    line-height: 1.08;
+    margin: 0 0 20px;
+    letter-spacing: -0.01em;
+  }
+  .hero h1 span{ color: var(--accent); }
+  .hero p{
+    font-size: 17px;
+    color: var(--text-muted);
+    max-width: 46ch;
+    margin: 0 0 32px;
+  }
+  .btn-row{ display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn{
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 14.5px;
+    padding: 12px 22px;
+    border-radius: var(--radius);
+    border: 1px solid transparent;
+    cursor: pointer;
+    display: inline-block;
+  }
+  .btn-primary{
+    background: var(--accent);
+    color: #14100a;
+  }
+  .btn-primary:hover{ background: #edb15a; }
+  .btn-ghost{
+    border-color: var(--border);
+    color: var(--text);
+  }
+  .btn-ghost:hover{ border-color: var(--text-dim); background: var(--bg-panel); }
+
+  /* Terminal mock */
+  .terminal{
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px -30px rgba(0,0,0,0.7);
+  }
+  .terminal-bar{
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-panel-2);
+  }
+  .terminal-bar .tdot{ width: 10px; height: 10px; border-radius: 50%; background: #3a3f4a; }
+  .terminal-title{
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-left: 6px;
+  }
+  .terminal-body{
+    padding: 22px 20px 26px;
+    font-family: var(--mono);
+    font-size: 14px;
+    min-height: 210px;
+  }
+  .terminal-line{ margin: 0 0 12px; color: var(--text-muted); }
+  .terminal-line .prompt{ color: var(--accent); }
+  .terminal-line .out{ color: var(--text); }
+  .cursor{
+    display: inline-block;
+    width: 8px;
+    height: 15px;
+    background: var(--accent);
+    margin-left: 2px;
+    vertical-align: middle;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink{ 50% { opacity: 0; } }
+
+  @media (max-width: 860px){
+    .hero{ grid-template-columns: 1fr; padding-top: 56px; gap: 40px; }
+  }
+
+  /* ---------- Sections ---------- */
+  section{ padding: 78px 0; border-top: 1px solid var(--border-soft); }
+  .section-label{
+    font-family: var(--mono);
+    font-size: 13.5px;
+    color: var(--accent);
+    margin: 0 0 14px;
+  }
+  .section-title{
+    font-family: var(--mono);
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: 700;
+    margin: 0 0 28px;
+    letter-spacing: -0.01em;
+  }
+
+  /* About */
+  .about-grid{
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 48px;
+  }
+  .about-side{
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.9;
+  }
+  .about-body p{
+    color: var(--text-muted);
+    font-size: 16.5px;
+    max-width: 62ch;
+    margin: 0 0 18px;
+  }
+  .about-body strong{ color: var(--text); font-weight: 600; }
+  @media (max-width: 780px){
+    .about-grid{ grid-template-columns: 1fr; gap: 20px; }
+  }
+
+  /* Skills */
+  .skills-grid{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border-soft);
+    border: 1px solid var(--border-soft);
+  }
+  .skill-group{
+    background: var(--bg);
+    padding: 22px 20px;
+  }
+  .skill-group h3{
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-dim);
+    margin: 0 0 16px;
+  }
+  .skill-list{ list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .skill-list li{
+    font-size: 14.5px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .skill-list li::before{
+    content: '';
+    width: 5px;
+    height: 5px;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+  @media (max-width: 780px){
+    .skills-grid{ grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 460px){
+    .skills-grid{ grid-template-columns: 1fr; }
+  }
+
+  /* Projects */
+  .project{
+    display: grid;
+    grid-template-columns: 0.95fr 1.05fr;
+    gap: 40px;
+    align-items: center;
+    padding: 36px 0;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .project:last-child{ border-bottom: none; padding-bottom: 0; }
+  .project:first-of-type{ padding-top: 0; }
+  .project-media{
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--bg-panel);
+    aspect-ratio: 16/10.4;
+  }
+  .project-media img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    display: block;
+    filter: saturate(0.92);
+    transition: filter .2s ease;
+  }
+  .project:hover .project-media img{ filter: saturate(1); }
+  .project-focus{
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--accent);
+    margin: 0 0 10px;
+  }
+  .project h3{
+    font-family: var(--mono);
+    font-size: 22px;
+    margin: 0 0 12px;
+  }
+  .project p{
+    color: var(--text-muted);
+    font-size: 15.5px;
+    max-width: 52ch;
+    margin: 0 0 18px;
+  }
+  .tag-row{ display: flex; flex-wrap: wrap; gap: 8px; }
+  .tag{
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    padding: 5px 10px;
+    border-radius: var(--radius);
+  }
+  @media (max-width: 780px){
+    .project{ grid-template-columns: 1fr; gap: 22px; }
+  }
+
+  /* Contact */
+  .contact-panel{
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg-panel);
+    padding: 44px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 28px;
+  }
+  .contact-panel h2{
+    font-family: var(--mono);
+    font-size: clamp(22px, 3.4vw, 32px);
+    margin: 0 0 10px;
+    max-width: 16ch;
+  }
+  .contact-panel p{ color: var(--text-muted); margin: 0; max-width: 40ch; }
+  .contact-links{ display: flex; flex-direction: column; gap: 12px; }
+  .contact-links a{
+    font-family: var(--mono);
+    font-size: 14.5px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid transparent;
+  }
+  .contact-links a:hover{ color: var(--accent); }
+  .contact-links .arrow{ color: var(--accent); }
+
+  @media (max-width: 640px){
+    .contact-panel{ padding: 30px 24px; flex-direction: column; align-items: flex-start; }
+  }
+
+  footer{
+    padding: 28px 0 40px;
+    text-align: center;
+    color: var(--text-dim);
+    font-family: var(--mono);
+    font-size: 12.5px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a href="#top" class="logo"><span class="dot"></span>diaz.dev</a>
+    <button class="nav-toggle" id="navToggle" aria-label="Buka menu" aria-expanded="false">≡</button>
+    <nav class="nav-links" id="navLinks">
+      <a href="#about">Tentang</a>
+      <a href="#skills">Skill</a>
+      <a href="#projects">Proyek</a>
+      <a href="#contact">Kontak</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero wrap" style="border-top:none;">
+    <div>
+      <p class="hero-kicker">Halo, perkenalkan</p>
+      <h1>Diaz, membangun<br>sisi <span>backend</span><br>dari aplikasi web.</h1>
+      <p>Web developer yang fokus di balik layar: merancang API, mengatur alur data, dan menyambungkan sistem supaya semuanya berjalan stabil — bukan cuma tampil bagus di depan.</p>
+      <div class="btn-row">
+        <a href="#projects" class="btn btn-primary">Lihat Proyek</a>
+        <a href="#contact" class="btn btn-ghost">Hubungi Saya</a>
+      </div>
+    </div>
+
+    <div class="terminal">
+      <div class="terminal-bar">
+        <span class="tdot"></span><span class="tdot"></span><span class="tdot"></span>
+        <span class="terminal-title">diaz@backend — zsh</span>
+      </div>
+      <div class="terminal-body" id="terminalBody"></div>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="wrap about-grid">
+      <div class="about-side">
+        <p class="section-label">// Tentang</p>
+        <p>Berbasis di Indonesia<br>Fokus: Backend Development<br>Status: Open for work</p>
+      </div>
+      <div class="about-body">
+        <p>Aku Diaz, seorang <strong>web developer</strong> yang paling nyaman bekerja di sisi <strong>backend</strong> — bagian yang jarang terlihat tapi menentukan apakah sebuah aplikasi benar-benar bisa diandalkan.</p>
+        <p>Sehari-hari aku merancang <strong>REST API</strong>, mengatur struktur database, dan menyambungkan berbagai layanan agar data mengalir dengan rapi dari server ke pengguna. <strong>Spring Boot</strong> dan <strong>Laravel</strong> jadi dua tools utama yang paling sering kupakai untuk membangun fondasi itu.</p>
+        <p>Selain backend, aku juga cukup terbiasa menyentuh sisi frontend menggunakan <strong>Tailwind</strong> dan <strong>Bootstrap</strong> ketika sebuah proyek butuh dikerjakan secara full-stack.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="skills">
+    <div class="wrap">
+      <p class="section-label">// Skill &amp; Tools</p>
+      <h2 class="section-title">Yang aku pakai sehari-hari</h2>
+    </div>
+    <div class="wrap">
+      <div class="skills-grid">
+        <div class="skill-group">
+          <h3>Backend</h3>
+          <ul class="skill-list">
+            <li>Spring Boot</li>
+            <li>Java</li>
+            <li>Laravel</li>
+          </ul>
+        </div>
+        <div class="skill-group">
+          <h3>Frontend</h3>
+          <ul class="skill-list">
+            <li>JavaScript</li>
+            <li>Tailwind CSS</li>
+            <li>Bootstrap</li>
+          </ul>
+        </div>
+        <div class="skill-group">
+          <h3>Database</h3>
+          <ul class="skill-list">
+            <li>MySQL</li>
+            <li>PostgreSQL</li>
+            <li>MongoDB</li>
+          </ul>
+        </div>
+        <div class="skill-group">
+          <h3>Tools</h3>
+          <ul class="skill-list">
+            <li>GitHub</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects">
+    <div class="wrap">
+      <p class="section-label">// Proyek</p>
+      <h2 class="section-title">Beberapa hal yang sudah aku bangun</h2>
+
+      <div class="project">
+        <div class="project-media">
+          <img src="assets/lingulu.png" alt="Tampilan halaman utama Lingulu, platform belajar bahasa Inggris" loading="lazy">
+        </div>
+        <div>
+          <p class="project-focus">Fokus: Backend Development</p>
+          <h3>Lingulu</h3>
+          <p>Platform belajar Bahasa Inggris dengan tutor AI, dilengkapi model Machine Learning untuk mengecek akurasi pelafalan kalimat pengguna. Di proyek ini aku menangani sisi backend: merancang endpoint API dan menghubungkannya ke database PostgreSQL.</p>
+          <div class="tag-row">
+            <span class="tag">Spring Boot</span>
+            <span class="tag">Java</span>
+            <span class="tag">PostgreSQL</span>
+            <span class="tag">REST API</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="project">
+        <div class="project-media">
+          <img src="assets/tanemin.png" alt="Tampilan halaman utama Tanemin, platform panduan menanam tanaman" loading="lazy">
+        </div>
+        <div>
+          <p class="project-focus">Fokus: Full-Stack Development</p>
+          <h3>Tanemin</h3>
+          <p>Platform panduan menanam tanaman lengkap dengan katalog tanaman, pelacakan tanaman pribadi, dan Growee — chatbot pendamping berkebun. Proyek ini dikerjakan secara full-stack menggunakan Laravel dari sisi server hingga tampilan.</p>
+          <div class="tag-row">
+            <span class="tag">Laravel</span>
+            <span class="tag">PHP</span>
+            <span class="tag">MySQL</span>
+            <span class="tag">Full-Stack</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="wrap">
+      <div class="contact-panel">
+        <div>
+          <h2>Mari terhubung.</h2>
+          <p>Terbuka untuk kolaborasi, project backend, atau sekadar diskusi soal Spring Boot dan Laravel.</p>
+        </div>
+        <div class="contact-links">
+          <a href="mailto:diazagil061@gmail.com"><span class="arrow">→</span> diazagil061@gmail.com</a>
+          <a href="https://www.linkedin.com/in/diaz-agil-prasetyo" target="_blank" rel="noopener"><span class="arrow">→</span> LinkedIn / Diaz Agil Prasetyo</a>
+          <a href="https://github.com/Diazagil" target="_blank" rel="noopener"><span class="arrow">→</span> GitHub / Diazagil</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">© <span id="year"></span> Diaz — dibuat dengan HTML, CSS, dan sedikit kopi.</div>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  var toggle = document.getElementById('navToggle');
+  var links = document.getElementById('navLinks');
+  toggle.addEventListener('click', function(){
+    var isOpen = links.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', isOpen);
+  });
+  links.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){
+      links.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  // One orchestrated moment: type out the terminal intro on load.
+  var lines = [
+    { prompt: '$ whoami', out: '&gt; Diaz — Backend Web Developer' },
+    { prompt: '$ stack --primary', out: '&gt; Spring Boot · Java · Laravel' },
+    { prompt: '$ stack --database', out: '&gt; PostgreSQL · MySQL · MongoDB' },
+    { prompt: '$ status', out: '&gt; Open for collaboration' }
+  ];
+
+  var body = document.getElementById('terminalBody');
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function renderStatic(){
+    body.innerHTML = lines.map(function(l){
+      return '<p class="terminal-line"><span class="prompt">' + l.prompt + '</span><br><span class="out">' + l.out + '</span></p>';
+    }).join('') + '<span class="cursor"></span>';
+  }
+
+  if (reduceMotion) {
+    renderStatic();
+  } else {
+    var li = 0;
+    function typeLine(){
+      if (li >= lines.length) { 
+        var c = document.createElement('span');
+        c.className = 'cursor';
+        body.appendChild(c);
+        return;
+      }
+      var p = document.createElement('p');
+      p.className = 'terminal-line';
+      var prompt = document.createElement('span');
+      prompt.className = 'prompt';
+      p.appendChild(prompt);
+      body.appendChild(p);
+
+      var text = lines[li].prompt;
+      var ci = 0;
+      (function typeChar(){
+        if (ci < text.length){
+          prompt.textContent += text.charAt(ci);
+          ci++;
+          setTimeout(typeChar, 22);
+        } else {
+          setTimeout(function(){
+            var out = document.createElement('span');
+            out.className = 'out';
+            p.appendChild(document.createElement('br'));
+            p.appendChild(out);
+            out.innerHTML = lines[li].out;
+            li++;
+            setTimeout(typeLine, 260);
+          }, 120);
+        }
+      })();
+    }
+    typeLine();
+  }
+</script>
+
+</body>
+</html>
